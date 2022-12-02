@@ -1,34 +1,35 @@
 package package1Lib;
 
-import jakarta.validation.constraints.NotNull;
-
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import jakarta.validation.constraints.*;
 
 
 public class Book implements Comparable<Book> {
-
-    // +javadocs, rename values,
     public enum Genre {FANTASY, DETECTIVE, DRAMA, ROMANCE, THRILLER}
 
+    @Pattern(regexp = "[0-9]{11}]", message = "IBSN must contains 11 digitals." )
     private String ibsn;
     private String name;
     private boolean availability;
-    private  Genre genre;
+    private Genre genre;
+    @Positive(message = "Quantity should be positive.")
     private int quantity;
 
-    public Book(String ibsn, String name, Genre genre, int quantity){
+    public Book(String ibsn, String name, Genre genre, int quantity) {
         this.ibsn = ibsn;
         this.name = name;
         this.genre = genre;
         this.quantity = quantity;
     }
-    public Book(BookBuilder bookbuilder) {
-        this.ibsn = bookbuilder.ibsn;
-        this.name = bookbuilder.name;
-        this.genre = bookbuilder.genre;
-        this.quantity = bookbuilder.quantity;
-        this.availability = bookbuilder.availability;
+
+    public Book() {
     }
 
     public Genre getGenre() {
@@ -63,19 +64,19 @@ public class Book implements Comparable<Book> {
         this.name = name;
     }
 
-    public int getQuantity() {return quantity;}
+    public int getQuantity() {
+        return quantity;
+    }
 
-    public void setQuantity(int quantity) { this.quantity = quantity;}
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
     @Override
     public boolean equals(Object o) {               // edit
         if (this == o) return true;
         if (!(o instanceof Book book)) return false;
-        return getQuantity() == book.getQuantity()  && isAvailability() == book.isAvailability() && Objects.equals(getIbsn(), book.getIbsn()) && Objects.equals(getName(), book.getName()) && getGenre() == book.getGenre();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getIbsn(), getName(), isAvailability(), getGenre(), getQuantity());
+        return getQuantity() == book.getQuantity() && isAvailability() == book.isAvailability() && Objects.equals(getIbsn(), book.getIbsn()) && Objects.equals(getName(), book.getName()) && getGenre() == book.getGenre();
     }
 
     @Override
@@ -92,6 +93,11 @@ public class Book implements Comparable<Book> {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(getIbsn(), getName(), isAvailability(), getGenre(), getQuantity());
+    }
+
+    @Override
     public String toString() {
         return "{ IBSN='" + ibsn + '\'' +
                 ", name='" + name + '\'' +
@@ -104,44 +110,71 @@ public class Book implements Comparable<Book> {
     //Builder Class
     public static class BookBuilder {
 
-        // required parameters
-        private String ibsn;
-        private String name;
-        private boolean availability;
-        private Genre genre;
+        private Book book;
 
-        private int quantity;
-        public BookBuilder(String ibsn, String name, Genre genre, int quantity) {
-            this.ibsn = ibsn;
-            this.name = name;
-            this.genre = genre;
-            this.quantity = quantity;
-            this.availability = quantity > 0;
+        public BookBuilder() {
+            book = new Book();
         }
 
         public BookBuilder setAvailability(boolean value) {
-            availability = value;
+            book.availability = value;
+            return this;
+        }
+
+       /* public Book build() {
+            return new Book(this);
+        }*/
+
+        public BookBuilder setIbsn(String ibsn) {
+            book.ibsn = ibsn;
+            return this;
+        }
+
+        public BookBuilder setName(String name) {
+            book.name = name;
+            return this;
+        }
+
+        public BookBuilder setGenre(Genre genre) {
+            book.genre = genre;
+            return this;
+        }
+
+        public BookBuilder setQuantity(int quantity) {
+            book.quantity = quantity;
             return this;
         }
 
         public Book build() {
-            return new Book(this);
+            validate(book);
+            return book;
         }
-
     }
 
-    public Book(){}
+    private static void validate(Book book) throws IllegalArgumentException {
 
-    public static void main(String[] args) {
-       /* Book book = new Book("0054","OHiO", Genre.FANTASY,44);
-        book.setGenre(Genre.FANTASY);
-        book.setAvailability(true);
-        book.toString();
-        System.out.println(book);
-        //book();
-        Book book2 = new Book.BookBuilder("hello","there", Genre.ROMANCE, 55).build();
-        book2.toString();
-        System.out.println(book2);*/
+        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+
+        Set<ConstraintViolation<Book>> violations = validator.validate(book);
+
+        StringBuilder errorMessage = new StringBuilder();
+
+        for(ConstraintViolation<Book> e : violations){
+            errorMessage.append("Error. " + "Input value: " + e.getInvalidValue()+ " is incorrect. "+ e.getMessage()); //
+            errorMessage.append("\n");
+        }
+
+        if(errorMessage.length() > 0){
+            throw new IllegalArgumentException(errorMessage.toString());
+        }
+    }
+
+    public static void main(String args[]){
+        try{
+            Book book = new BookBuilder().setIbsn("2b457").setName("Jerry and Ted").setGenre(Book.Genre.DETECTIVE).setQuantity(-6).build();
+        } catch(IllegalArgumentException e){
+            System.out.println(e.getMessage());
+        }
     }
 
 }
