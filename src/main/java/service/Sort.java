@@ -1,3 +1,3 @@
-package package1Lib;
+package service;
 
 public enum Sort {ASC, DSC}

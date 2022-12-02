@@ -1,6 +1,7 @@
-package package1Lib;
+package service;
 
-import package1Lib.Sort;
+import package1Lib.Book;
+import package1Lib.PublishingHouse;
 
 import java.util.*;
 
@@ -14,7 +15,7 @@ public class BookQuantityService {
         quatityComparator = new QuantityComparator();
     }
 
-    public Set<Book> quantityUp(int quantity, Sort type) {
+    public Set<Book> aboveQuantity(int quantity, Sort type) {
         TreeSet<Book> books = new TreeSet<Book>(quatityComparator);
         for (Book book : publishingHouse.getBooks()) {
             if (book.getQuantity() >= quantity) {
@@ -27,7 +28,7 @@ public class BookQuantityService {
         return books.descendingSet();
     }
 
-    public Set<Book> quantityDown(int quantity, Sort type) {
+    public Set<Book> belowQuantity(int quantity, Sort type) {
         TreeSet<Book> books = new TreeSet<Book>(quatityComparator);
         for (Book book : publishingHouse.getBooks()) {
             if (book.getQuantity() <= quantity) {
@@ -41,7 +42,7 @@ public class BookQuantityService {
     }
 
 
-    public Set<Book> middleSort(int fromQuantity, int toQuantity, Sort type) {
+    public Set<Book> betweenQuantity(int fromQuantity, int toQuantity, Sort type) {
         TreeSet<Book> books = new TreeSet<Book>(quatityComparator);
         for (Book book : publishingHouse.getBooks()) {
             if (book.getQuantity() >= fromQuantity && book.getQuantity()<=toQuantity) {

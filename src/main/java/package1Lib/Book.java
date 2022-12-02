@@ -1,10 +1,12 @@
 package package1Lib;
 
+import jakarta.validation.constraints.NotNull;
+
 import java.util.List;
 import java.util.Objects;
 
 
-public class Book {
+public class Book implements Comparable<Book> {
 
     // +javadocs, rename values,
     public enum Genre {FANTASY, DETECTIVE, DRAMA, ROMANCE, THRILLER}
@@ -74,6 +76,19 @@ public class Book {
     @Override
     public int hashCode() {
         return Objects.hash(getIbsn(), getName(), isAvailability(), getGenre(), getQuantity());
+    }
+
+    @Override
+    public int compareTo(@NotNull Book book) {
+        if (this.quantity == book.quantity) {
+            return 0;
+        }
+        if (this.quantity > book.quantity) {
+            return 1;
+        } else {
+            return -1;
+        }
+
     }
 
     @Override

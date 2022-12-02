@@ -1,9 +1,12 @@
 package package1Lib;
 
+import service.BookQuantityService;
+import service.BookStream;
+import service.Sort;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 public class Main {
     public static void main(String[] args) {
@@ -28,23 +31,23 @@ public class Main {
 
         //books.forEach(System.out::println);
         System.out.println("\n quantityUp SERVICE");
-        Set<Book> printBooksList1 = bookQuantityService.quantityUp(12, Sort.ASC);
+        Set<Book> printBooksList1 = bookQuantityService.aboveQuantity(12, Sort.ASC);
         printBooksList1.forEach(System.out::println);
 
         System.out.println("\n quantityDown SERVICE");
-        Set<Book> printBooksList2 =  bookQuantityService.quantityDown(20, Sort.DSC);
+        Set<Book> printBooksList2 =  bookQuantityService.belowQuantity(20, Sort.DSC);
         printBooksList2.forEach(System.out::println);
 
         System.out.println("\n from number to number SERVICE");
-        Set<Book> printBooksList3 = bookQuantityService.middleSort(3, 30, Sort.DSC);
+        Set<Book> printBooksList3 = bookQuantityService.betweenQuantity(3, 30, Sort.DSC);
         printBooksList3.forEach(System.out::println);
 
         System.out.println("\n Sort STREAM sortQuantityUp");
-        List<Book> printBooksList4 = bookStream.sortQuantityUp(12);
+        List<Book> printBooksList4 = bookStream.quantityUp(12);
         printBooksList4.forEach(System.out::println);
 
         System.out.println("\n Sort STREAM sortQuantityDown");
-        List<Book> printBooksList5 = bookStream.sortQuantityDown(20);
+        List<Book> printBooksList5 = bookStream.quantityDown(20);
         printBooksList5.forEach(System.out::println);
 
         System.out.println("\n Sort STREAM middleSort");

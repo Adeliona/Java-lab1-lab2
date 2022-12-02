@@ -1,4 +1,6 @@
-package package1Lib;
+package service;
+
+import package1Lib.Book;
 
 import java.util.Comparator;
 

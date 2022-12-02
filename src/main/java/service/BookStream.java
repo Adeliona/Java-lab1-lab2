@@ -1,4 +1,7 @@
-package package1Lib;
+package service;
+
+import package1Lib.Book;
+import package1Lib.PublishingHouse;
 
 import java.util.Comparator;
 import java.util.List;
@@ -11,7 +14,7 @@ public class BookStream {
     public PublishingHouse getPublishingHouse(){return publishingHouse;}
     public  void setPublishingHouse(PublishingHouse publishingHouse){this.publishingHouse = publishingHouse;}
 
-    public List<Book> sortQuantityUp(int quantity){
+    public List<Book> quantityUp(int quantity){
         return publishingHouse.getBooks().stream()
                 .filter(book -> book.getQuantity()>=quantity)
                 .sorted(Comparator.comparing(Book::getQuantity))
@@ -19,9 +22,9 @@ public class BookStream {
     }
 
 
-    public List<Book> sortQuantityDown(int quantity){
+    public List<Book> quantityDown(int quantity){
         return publishingHouse.getBooks().stream()
-                .filter(car -> car.getQuantity()<=quantity)
+                .filter(book -> book.getQuantity()<=quantity)
                 .sorted(Comparator.comparing(Book::getQuantity))
                 .collect(Collectors.toList());
     }
