@@ -27,12 +27,14 @@ public class BookJDBC {
     public Boolean createBook() throws SQLException, IOException {
         Statement statement = connection.createStatement();
         String book = "CREATE TABLE book(" +
-                "id_book serial PRIMARY KEY, " +
+                "id serial PRIMARY KEY, " +
                 "ibsn VARCHAR(11) NOT NULL, " +
                 "genre VARCHAR(30) NOT NULL, " +
                 "quantity INT DEFAULT NULL, " +
                 "id_author INT," +
-                "FOREIGN KEY (id_author) REFERENCES  author(id_author) " +
+                "id_publishing_house INT," +
+                "FOREIGN KEY (id_author) REFERENCES  author(id)," +
+                "FOREIGN KEY (id_publishing_house) REFERENCES  publishing_house(id)" +
                 ");";
         return statement.execute(book);
     }
@@ -40,13 +42,30 @@ public class BookJDBC {
     public Boolean  createAuthor() throws SQLException {
         try (Statement statement = connection.createStatement()) {
             String author = "CREATE TABLE author(" +
-                    "id_author serial PRIMARY KEY," +
+                    "id serial PRIMARY KEY," +
                     "dateOfBirth DATE NOT NULL" +
                     ");";
             return statement.execute(author);
         }
     }
 
+    public Boolean  createPublishingHouse() throws SQLException {
+        try (Statement statement = connection.createStatement()) {
+            String publishing_house = "CREATE TABLE publishing_house(" +
+                    "id serial PRIMARY KEY," +
+                    "name DATE NOT NULL," +
+                    "country VARCHAR(30) NOT NULL," +
+                    "city VARCHAR(30) NOT NULL" +
+                    ");";
+            return statement.execute(publishing_house);
+        }
+    }
+
+    public void  dropPublishingHouse() throws SQLException {
+        Statement statement = connection.createStatement();
+        String dropPublishingHouse = "DROP TABLE IF EXISTS publishing_house;";
+        statement.execute(dropPublishingHouse);
+    }
     public void  dropBook() throws SQLException {
         Statement statement = connection.createStatement();
         String dropBook = "DROP TABLE IF EXISTS book;";
@@ -59,13 +78,28 @@ public class BookJDBC {
         statement.execute(dropAuthor);
     }
 
+    public Boolean createTables() throws SQLException, IOException {
+        return  createAuthor() && createPublishingHouse() && createBook();
+    }
+
+    public  void dropTables() throws SQLException, IOException {
+        dropBook();
+        dropPublishingHouse();
+        dropAuthor();
+    }
     public static void main(String[] args) throws SQLException, IOException {
         BookJDBC bookJDBC = new BookJDBC();
-        bookJDBC.dropAuthor();
-        bookJDBC.dropBook();
-        bookJDBC.createAuthor();
-        bookJDBC.createBook();
 
+//        bookJDBC.dropBook();
+//        bookJDBC.dropAuthor();
+//        bookJDBC.dropPublishingHouse();
+//
+//        bookJDBC.createAuthor();
+//        bookJDBC.createPublishingHouse();
+//        bookJDBC.createBook();
+
+        bookJDBC.dropTables();
+        bookJDBC.createTables();
     }
 
 }
